@@ -300,4 +300,28 @@ h1 {
   padding-top: 0.1em;
   padding-bottom: 0.15em;
 }
+/* === Fix title clipping on generated charts === */
+
+#output h1,
+#print-area h1,
+#preview h1,
+#rendered-chart h1,
+.chart-title,
+h1 {
+  line-height: 1.25 !important;
+  padding-top: 0.3em !important;
+  padding-bottom: 0.35em !important;
+  display: block !important;
+}
+
+/* === Fix the container around the title so it gives room === */
+
+#output,
+#print-area,
+#preview,
+#rendered-chart {
+  padding-top: 1rem !important;
+  padding-bottom: 1rem !important;
+  overflow: visible !important;
+}
 
