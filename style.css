@@ -339,4 +339,75 @@ h1 {
 .sample-output * {
   color: #1e293b !important;        /* applies to all nested text */
 }
+/* Landing preview "paper" tweaks */
+.paper {
+  border-radius: 1.25rem;
+  overflow: hidden;
+}
+
+/* The inner sheet area */
+.anchor-sheet {
+  border-radius: 1.25rem;
+  background-color: #fdfcf7; /* warm off-white */
+  box-shadow:
+    inset 0 0 0 1px rgba(148, 163, 184, 0.5),
+    0 10px 30px rgba(15, 23, 42, 0.6);
+}
+
+/* Optional: make the lined-paper effect a bit softer if bg-lined-light is yours */
+/*
+.bg-lined-light {
+  background-size: 100% 24px;
+  background-color: #fdfcf7;
+  background-blend-mode: multiply;
+}
+*/
+.marker-title {
+  letter-spacing: 0.02em;
+  text-shadow: 0 1px 0 rgba(255, 255, 255, 0.6);
+}
+/* Clean up heading highlight in cards (no thick bleedy underline) */
+.card .marker-h .hl {
+  text-decoration: none;
+  background: transparent;
+  box-shadow: none;
+}
+
+/* Marker-style underline for section titles */
+.card .marker-h {
+  position: relative;
+  display: inline-block;
+  padding-bottom: 0.15rem;
+}
+
+.card .marker-h::after {
+  content: "";
+  position: absolute;
+  left: 0.05rem;
+  right: 0.4rem;
+  bottom: 0.05rem;
+  height: 3px;
+  border-radius: 999px;
+  background: linear-gradient(
+    90deg,
+    rgba(249, 115, 22, 0.9),
+    rgba(249, 201, 84, 0.9)
+  );
+  opacity: 0.9;
+}
+/* Teacher Tip styling in the landing preview */
+.anchor-sheet .sticky h4 {
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  margin-top: 0.75rem;
+  margin-bottom: 0.25rem;
+  color: #0f172a;
+}
+
+.anchor-sheet .sticky p {
+  font-size: 0.8rem;
+  color: #111827;
+  max-width: 18rem;
+}
 
