@@ -361,16 +361,97 @@ function renderFrayerIFD(obj){
   contentEl.appendChild(grid);
 }
 function renderFrayerClassic(obj){ return renderFrayerIFD(obj); }
+// Clean up math text a little (exponents, units like cm^2, etc.)
+function formatMath(text) {
+  if (!text) return '';
+  return text
+    // Common units
+    .replace(/cm\^2/g, 'cm²')
+    .replace(/cm\^3/g, 'cm³')
+    .replace(/m\^2/g, 'm²')
+    .replace(/m\^3/g, 'm³')
+    // Generic "x^2" -> "x<sup>2</sup>"
+    .replace(/(\w+)\^(\d+)/g, '$1<sup>$2</sup>');
+}
+
+// Remove leading "1. ", "2) ", etc. from steps so <ol> can number them
+function stripLeadingNumber(text) {
+  if (!text) return '';
+  return text.replace(/^\s*\d+[\.\)]\s*/, '');
+}
+
+function renderFrayerClassic(obj){ return renderFrayerIFD(obj); }
+
 function renderMathEx(obj){
   contentEl.innerHTML='';
-  const top=document.createElement('div'); top.className='grid gap-3 md:grid-cols-2';
-  top.appendChild(makeCard('Worked Example — Given', `<ul class='pretty-list pl-6'>${(obj.given||[]).map(g=>`<li><span class="mathface ${toggleHand.checked?'math-hand':''}">${g}</span></li>`).join('')}</ul>`));
-  top.appendChild(makeCard('Formula', `<div class="eqbox"><span class="mathface ${toggleHand.checked?'math-hand':''}">${obj.formula||''}</span></div>`));
+
+  const top=document.createElement('div');
+  top.className='grid gap-3 md:grid-cols-2';
+
+  // Worked Example — Given
+  top.appendChild(
+    makeCard(
+      'Worked Example — Given',
+      `<ul class='pretty-list pl-6'>${(obj.given||[])
+        .map(g =>
+          `<li><span class="mathface ${toggleHand.checked?'math-hand':''}">${formatMath(g)}</span></li>`
+        ).join('')}
+      </ul>`
+    )
+  );
+
+  // Formula
+  top.appendChild(
+    makeCard(
+      'Formula',
+      `<div class="eqbox">
+         <span class="mathface ${toggleHand.checked?'math-hand':''}">
+           ${formatMath(obj.formula || '')}
+         </span>
+       </div>`
+    )
+  );
+
   contentEl.appendChild(top);
-  contentEl.appendChild(makeCard('Steps', `<ol class='list-decimal pl-6'>${(obj.steps||[]).map(s=>`<li><span class="mathface ${toggleHand.checked?'math-hand':''}">${s}</span></li>`).join('')}</ol>`));
-  contentEl.appendChild(makeCard('Worked Example', `<div class='space-y-2 text-lg'>${(obj.example||[]).map(l=>`<div class="mathface ${toggleHand.checked?'math-hand':''}">${l}</div>`).join('')}</div>`));
-  contentEl.appendChild(makeCard('Answer', `<div class='text-xl'><span class="mathface ${toggleHand.checked?'math-hand':''}">${obj.answer||''}</span></div>`));
+
+  // Steps (strip leading numbers so <ol> handles numbering)
+  contentEl.appendChild(
+    makeCard(
+      'Steps',
+      `<ol class='list-decimal pl-6'>${(obj.steps||[])
+        .map(s => {
+          const clean = stripLeadingNumber(s);
+          return `<li><span class="mathface ${toggleHand.checked?'math-hand':''}">${formatMath(clean)}</span></li>`;
+        }).join('')}
+      </ol>`
+    )
+  );
+
+  // Worked Example lines
+  contentEl.appendChild(
+    makeCard(
+      'Worked Example',
+      `<div class='space-y-2 text-lg'>${(obj.example||[])
+        .map(l =>
+          `<div class="mathface ${toggleHand.checked?'math-hand':''}">${formatMath(l)}</div>`
+        ).join('')}
+      </div>`
+    )
+  );
+
+  // Answer
+  contentEl.appendChild(
+    makeCard(
+      'Answer',
+      `<div class='text-xl'>
+         <span class="mathface ${toggleHand.checked?'math-hand':''}">
+           ${formatMath(obj.answer || '')}
+         </span>
+       </div>`
+    )
+  );
 }
+
 
 function renderByLayout(layout, data){
   titleEl.textContent = data.title || (topicEl.value || 'Your Chart');
