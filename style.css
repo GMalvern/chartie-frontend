@@ -434,17 +434,6 @@ h1 {
   color: #0f172a !important;
   max-width: 22rem;
 }
-/* Soft notebook-style margin line inside landing preview */
-.anchor-sheet::before {
-  content: "";
-  position: absolute;
-  top: 0;
-  left: 2.75rem;              /* aligns with your fake punched holes */
-  width: 2px;
-  height: 100%;
-  background: rgba(59, 130, 246, 0.25); /* soft blue line */
-  pointer-events: none;
-}
 .anchor-sheet {
   position: relative;
   box-shadow:
