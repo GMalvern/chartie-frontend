@@ -324,4 +324,19 @@ h1 {
   padding-bottom: 1rem !important;
   overflow: visible !important;
 }
+/* === Make landing-page sample charts darker and more readable === */
+.landing-preview,
+.landing-sample,
+#landing-sample,
+.sample-chart,
+.sample-output {
+  color: #1e293b !important;       /* Slate-800 */
+}
+
+.landing-preview *,
+.landing-sample *,
+.sample-chart *,
+.sample-output * {
+  color: #1e293b !important;        /* applies to all nested text */
+}
 
