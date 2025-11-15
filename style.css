@@ -410,4 +410,28 @@ h1 {
   color: #111827;
   max-width: 18rem;
 }
+/* === Larger, more readable sample-chart text === */
+
+/* Step and example text inside the landing sample */
+.card ol li,
+.card .mathface div {
+  font-size: 0.95rem !important;   /* bigger than text-sm */
+  line-height: 1.4 !important;
+  color: #0f172a !important;       /* keep it dark */
+}
+
+/* Make the whole Step list a bit roomier */
+.card ol {
+  padding-left: 1.25rem !important;
+  margin-top: 0.25rem;
+  margin-bottom: 0.25rem;
+}
+
+/* Teacher Tip paragraph sizing */
+.anchor-sheet .sticky p {
+  font-size: 0.95rem !important;   /* was 0.8 → more readable */
+  line-height: 1.45 !important;
+  color: #0f172a !important;
+  max-width: 22rem;
+}
 
