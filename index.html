@@ -1,23 +1,346 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta charset="utf-8" />
   <title>Chartie™ — Think + Ink + Chart. BOOM!</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <!-- Tailwind (CDN) -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Patrick+Hand&family=Poppins:wght@400;600&family=DM+Serif+Display:ital@0;1&family=Nunito+Sans:wght@400;700&family=Kalam:wght@300;400;700&display=swap" rel="stylesheet">
+
+  <!-- Chartie styles -->
   <link rel="stylesheet" href="style.css" />
 </head>
 
-<body>
-  <div id="app">
-    <h1>Chartie™</h1>
-    <p class="tagline">Think ✦ Ink ✦ Chart. BOOM!</p>
+<body class="min-h-screen bg-slate-100 text-slate-900">
+  <div class="min-h-screen flex flex-col">
 
-    <textarea id="prompt" placeholder="Tell Chartie what you want to make…"></textarea>
-    <button id="generate">Create Chart</button>
+    <!-- TOP NAV -->
+    <header class="bg-white/90 backdrop-blur border-b border-slate-200">
+      <div class="max-w-7xl mx-auto px-6 py-3 flex items-center justify-between gap-4">
+        <div class="flex items-center gap-2">
+          <!-- If you upload your PNG later, you can replace this text with <img> -->
+          <div class="h-9 w-9 rounded-xl bg-amber-400 flex items-center justify-center font-bold text-slate-900 text-lg shadow-sm">
+            C
+          </div>
+          <div>
+            <div class="font-semibold tracking-tight text-slate-900">Chartie™</div>
+            <div class="text-xs text-slate-500">Think · Ink · Chart. BOOM!</div>
+          </div>
+        </div>
+        <nav class="hidden sm:flex items-center gap-6 text-sm">
+          <a href="#builder" class="text-slate-600 hover:text-slate-900">Builder</a>
+          <span class="inline-flex items-center rounded-full bg-emerald-50 px-3 py-1 text-xs font-semibold text-emerald-700 border border-emerald-200">
+            Beta · Teacher-tested
+          </span>
+        </nav>
+      </div>
+    </header>
 
-    <div id="result"></div>
+    <!-- HERO -->
+    <main class="flex-1">
+      <section class="bg-slate-900 text-slate-50">
+        <div class="max-w-7xl mx-auto px-6 py-12 lg:py-16 grid gap-10 lg:grid-cols-[minmax(0,1.2fr),minmax(0,1fr)] items-center">
+          <div>
+            <p class="text-xs font-semibold uppercase tracking-[0.18em] text-amber-300 mb-3">Anchor Chart Generator</p>
+            <h1 class="text-3xl sm:text-4xl lg:text-5xl font-semibold leading-tight mb-4">
+              <span>Stop wrestling PowerPoint.</span><br />
+              <span>Let Chartie</span>
+              <span class="hl hl-clean">make</span>
+              <span> it pretty.</span>
+            </h1>
+            <p class="text-sm sm:text-base text-slate-200/80 max-w-xl mb-6">
+              Type a topic. Get a clean, printable anchor chart or mini-poster in seconds —
+              **standard, comparison, cause &amp; effect, Mathex worked examples, and simple layouts** for
+              “just paste my content.”
+            </p>
+            <div class="flex flex-wrap items-center gap-3 mb-4">
+              <a href="#builder" class="inline-flex items-center gap-2 rounded-xl bg-amber-400 text-slate-900 font-semibold px-4 py-2 text-sm shadow-md hover:bg-amber-300">
+                Open Chart Builder
+                <span aria-hidden="true">↘️</span>
+              </a>
+              <span class="text-xs text-slate-300">
+                No logins. No templates. Just charts.
+              </span>
+            </div>
+            <div class="flex flex-wrap gap-3 text-[0.7rem] text-slate-300">
+              <span class="pill">MathEx worked examples</span>
+              <span class="pill">Graph / lined / poster modes</span>
+              <span class="pill">Simple “Title &amp; Body” layouts</span>
+              <span class="pill">Sticky notes &amp; student speak</span>
+            </div>
+          </div>
+
+          <div class="hidden md:block">
+            <!-- Simple fake preview frame -->
+            <div class="paper rounded-2xl border border-slate-800/60 bg-slate-900/60 shadow-2xl shadow-slate-950/50 p-3">
+              <div class="anchor-sheet bg-lined-light rounded-2xl p-0">
+                <div class="pl-16 pr-6 pt-4 pb-5 relative">
+                  <h2 class="marker-title text-[1.7rem] mb-1 truncate">
+                    Solving Two-Step Equations
+                  </h2>
+                  <p class="text-slate-600 text-xs mb-1 pl-[0.1rem]">
+                    Quick “I CAN” snapshot for your wall
+                  </p>
+                  <div class="grid gap-2 mt-2">
+                    <div class="card">
+                      <h3 class="marker-h"><span class="hl hl-clean">Step-by-Step</span></h3>
+                      <ol class="list-decimal pl-5 text-xs space-y-1">
+                        <li>Undo addition / subtraction first.</li>
+                        <li>Then undo multiplication / division.</li>
+                        <li>Keep both sides balanced each time.</li>
+                      </ol>
+                    </div>
+                    <div class="card">
+                      <h3 class="marker-h"><span class="hl hl-clean">Worked Example</span></h3>
+                      <div class="mathface text-sm space-y-1">
+                        <div>3x + 5 = 17</div>
+                        <div>3x = 12</div>
+                        <div>x = 4 ✅</div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="sticky hidden md:block" aria-hidden="true">
+                    <h4>Teacher Tip</h4>
+                    <p>Have students highlight each step in a different color the first few times they practice.</p>
+                  </div>
+                </div>
+              </div>
+              <div class="flex items-center justify-between mt-3 text-[0.65rem] text-slate-300/80">
+                <span>Export as PNG or PDF</span>
+                <span>Designed for poster makers &amp; printers</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- BUILDER -->
+      <section id="builder" class="max-w-7xl mx-auto px-6 py-10 space-y-6">
+        <!-- Header -->
+        <header class="space-y-1 text-center md:text-left">
+          <h2 class="text-xl sm:text-2xl font-semibold text-slate-900">Chart Builder</h2>
+          <p class="text-sm text-slate-600">
+            Pick a layout, choose a background, type a topic, and let Chartie do the rest.  
+            Download as PNG or PDF for your wall, slides, or handouts.
+          </p>
+        </header>
+
+        <!-- CONTROL PANEL + SHEET (from v2.2) -->
+        <div class="paper p-5 space-y-6">
+          <!-- CONTROL PANEL -->
+          <section class="space-y-5">
+            <!-- Row A -->
+            <div class="grid gap-3 md:grid-cols-[1fr_auto] items-end">
+              <div class="minw-0">
+                <label class="block text-sm font-medium mb-1">Topic</label>
+                <input id="topic" class="w-full rounded-lg border px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500" placeholder="Type a topic for AI… or pick a Simple layout and paste." />
+                <div id="error" class="hidden mt-2 text-rose-700 text-sm font-semibold"></div>
+              </div>
+              <div class="row-wrap items-end">
+                <button id="btn-generate" class="rounded-xl bg-indigo-600 text-white font-semibold px-4 py-2">Create Chart</button>
+                <div class="min-w-[240px]">
+                  <div class="progress-wrap">
+                    <div id="prog-fill" class="progress-fill"></div>
+                    <div id="pencil" class="pencil">
+                      <svg viewBox="0 0 64 64" width="32" height="32" aria-hidden="true">
+                        <path d="M8 56l8-2 30-30-6-6-30 30-2 8z" fill="#ffbf47"/>
+                        <path d="M50 12l6 6-6 6-6-6 6-6z" fill="#0ea5e9"/>
+                        <path d="M16 54l6-2-4-4-2 6z" fill="#eab308"/>
+                      </svg>
+                    </div>
+                  </div>
+                  <div id="loading-text" class="text-xs text-slate-600 mt-1">Ready. Type a topic and hit Create.</div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Row B -->
+            <div class="grid gap-3 lg:grid-cols-2">
+              <div class="grid gap-3 sm:grid-cols-2">
+                <div>
+                  <label class="block text-sm font-medium mb-1">Layout</label>
+                  <select id="layout" class="w-full rounded-lg border px-3 py-2">
+                    <optgroup label="AI layouts">
+                      <option value="auto">Auto (detect)</option>
+                      <option value="standard">Standard</option>
+                      <option value="compare">Comparison (POV)</option>
+                      <option value="cause">Cause ↔ Effect</option>
+                      <option value="timelineH">Timeline — Horizontal</option>
+                      <option value="frayer">Frayer (IFD)</option>
+                      <option value="frayerClassic">Frayer — Classic</option>
+                      <option value="mathex">MathEx — Worked Example</option>
+                    </optgroup>
+                    <optgroup label="Simple layouts (no AI)">
+                      <option value="simple-title-body">Simple — Title &amp; Body</option>
+                      <option value="simple-2col">Simple — Two Columns</option>
+                      <option value="simple-3col">Simple — Three Columns</option>
+                      <option value="simple-2x2">Simple — 2×2 Grid</option>
+                      <option value="simple-title-sub-3">Simple — Title + Subtitle + 3 Bullets</option>
+                      <option value="simple-title-sub-list">Simple — Title + Subtitle + List</option>
+                      <option value="simple-quote">Simple — Quote Card</option>
+                      <option value="simple-def-callout">Simple — Definition Callout</option>
+                      <option value="simple-objective-steps">Simple — Objective + Steps</option>
+                      <option value="simple-image">Simple — Image &amp; Caption</option>
+                    </optgroup>
+                  </select>
+                </div>
+                <div>
+                  <label class="block text-sm font-medium mb-1">Toggles</label>
+                  <div class="row-wrap text-sm">
+                    <label class="flex items-center gap-2"><input id="toggle-big" type="checkbox" class="h-4 w-4"><span>Big Text</span></label>
+                    <label class="flex items-center gap-2"><input id="toggle-emoji" type="checkbox" class="h-4 w-4"><span>Emoji bullets</span></label>
+                    <label class="flex items-center gap-2"><input id="toggle-hand" type="checkbox" class="h-4 w-4"><span>Handwritten math</span></label>
+                    <label class="flex items-center gap-2"><input id="toggle-sticky" type="checkbox" class="h-4 w-4"><span>Sticky note</span></label>
+                  </div>
+                </div>
+              </div>
+
+              <div class="grid gap-3 sm:grid-cols-3">
+                <div>
+                  <label class="block text-sm font-medium mb-1">Highlight style</label>
+                  <select id="hlStyle" class="w-full rounded-lg border px-3 py-2">
+                    <option value="clean">Clean underline</option>
+                    <option value="brush">Brush stroke</option>
+                    <option value="none">None</option>
+                  </select>
+                </div>
+                <div>
+                  <label class="block text-sm font-medium mb-1">Font preset</label>
+                  <select id="fontPreset" class="w-full rounded-lg border px-3 py-2">
+                    <option value="hand+rounded">Flair Pen (Patrick Hand + Poppins)</option>
+                    <option value="serif+rounded">Academic Queen (DM Serif + Nunito)</option>
+                    <option value="hand+sans">That Funny Teacher (Patrick Hand + Nunito)</option>
+                    <option value="clean+academic">Clean Academic (Nunito + Nunito)</option>
+                  </select>
+                </div>
+                <div>
+                  <label class="block text-sm font-medium mb-1">Background</label>
+                  <select id="bgStyle" class="w-full rounded-lg border px-3 py-2">
+                    <option value="lined-light">Lined (Light)</option>
+                    <option value="lined-dark">Lined (Dark)</option>
+                    <option value="graph">Graph paper</option>
+                    <option value="poster">Poster (bright white)</option>
+                    <option value="blank">Blank</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+
+            <!-- Row C -->
+            <div class="grid gap-3 lg:grid-cols-2">
+              <div>
+                <div class="text-sm font-medium mb-1">Accent</div>
+                <div class="row-wrap items-center">
+                  <!-- Original set -->
+                  <button class="swatch" data-color="#f59e0b" style="background:#fde68a" title="Amber"></button>
+                  <button class="swatch" data-color="#22c55e" style="background:#bbf7d0" title="Green"></button>
+                  <button class="swatch" data-color="#60a5fa" style="background:#bfdbfe" title="Blue"></button>
+                  <button class="swatch" data-color="#f472b6" style="background:#fecdd3" title="Pink"></button>
+                  <button class="swatch" data-color="#a78bfa" style="background:#ddd6fe" title="Violet"></button>
+                  <!-- New softies -->
+                  <button class="swatch" data-color="#fb923c" style="background:#ffedd5" title="Peach"></button>
+                  <button class="swatch" data-color="#84cc16" style="background:#ecfccb" title="Lime"></button>
+                  <button class="swatch" data-color="#06b6d4" style="background:#cffafe" title="Cyan"></button>
+                  <button class="swatch" data-color="#ef4444" style="background:#fee2e2" title="Soft Red"></button>
+                  <button class="swatch" data-color="#14b8a6" style="background:#ccfbf1" title="Teal"></button>
+                </div>
+              </div>
+              <div class="grid grid-cols-2 gap-2">
+                <div>
+                  <div class="text-sm font-medium">Paper (PDF)</div>
+                  <select id="paper" class="w-full rounded-lg border px-2 py-1 text-sm">
+                    <option value="letter">Letter 8.5×11</option>
+                    <option value="a4">A4</option>
+                    <option value="tabloid">Tabloid 11×17 (Poster Maker!)</option>
+                  </select>
+                </div>
+                <div>
+                  <div class="text-sm font-medium">Orientation</div>
+                  <select id="orientation" class="w-full rounded-lg border px-2 py-1 text-sm">
+                    <option value="portrait">Portrait</option>
+                    <option value="landscape" selected>Landscape</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+
+            <!-- Quick Templates -->
+            <div id="qt-panel" class="hidden border-t pt-4 space-y-3">
+              <div class="row-wrap items-center justify-between">
+                <h3 class="text-sm font-semibold">Quick Templates — paste or type your content</h3>
+                <div class="row-wrap">
+                  <button id="qt-split-blank" class="ghostbtn rounded-md px-2 py-1 text-xs">Split by blank lines</button>
+                  <button id="qt-split-lines" class="ghostbtn rounded-md px-2 py-1 text-xs">Split by new lines</button>
+                </div>
+              </div>
+              <div>
+                <label class="block text-xs font-semibold mb-1">Title</label>
+                <input id="qt-title" class="w-full rounded-lg border px-3 py-2" placeholder="Slide title…" />
+              </div>
+              <div id="qt-rows" class="grid gap-3"></div>
+              <div class="text-xs text-slate-500">Tip: For multi-box layouts, paste in one box then use “Split” to distribute.</div>
+            </div>
+
+            <!-- Sticky note editor -->
+            <div id="sticky-controls" class="hidden border-t pt-3 grid gap-3 sm:grid-cols-3">
+              <div class="sm:col-span-1">
+                <label class="block text-sm font-semibold mb-1">Sticky Note Title</label>
+                <input id="sticky-title" class="w-full rounded-lg border px-3 py-2" placeholder="Reminder / Key Tip" />
+              </div>
+              <div class="sm:col-span-2">
+                <label class="block text-sm font-semibold mb-1">Sticky Note Text</label>
+                <textarea id="sticky-text" rows="2" class="w-full rounded-lg border px-3 py-2" placeholder="Student-friendly blurb…"></textarea>
+              </div>
+            </div>
+          </section>
+
+          <!-- SHEET -->
+          <section id="sheet" class="anchor-sheet bg-lined-light paper p-0 mt-4">
+            <div class="flex flex-wrap items-center justify-between gap-2 pr-5">
+              <div class="minw-0">
+                <h2 id="chart-title" class="marker-title text-[1.9rem] md:text-[2.2rem] mb-1 pl-16 truncate">Your Chart</h2>
+                <p id="chart-sub" class="text-slate-700 pl-16 mb-2"></p>
+              </div>
+              <span id="format-badge" class="badge mt-2 mr-3">Format: Standard</span>
+            </div>
+            <div id="chart-content" class="grid gap-3 pl-16 pr-6 pb-6"></div>
+            <!-- Sticky lives here when enabled -->
+            <div id="sticky" class="sticky hidden" aria-hidden="true">
+              <h4 id="sticky-h"></h4>
+              <p id="sticky-p"></p>
+            </div>
+            <span class="visually-hidden" id="sr-status" aria-live="polite"></span>
+          </section>
+
+          <!-- Downloads -->
+          <div class="row-wrap items-center mt-4">
+            <button id="btn-download" class="rounded-xl bg-slate-200 hover:bg-slate-300 text-slate-900 font-semibold px-4 py-2">Download PNG</button>
+            <button id="btn-pdf" class="rounded-xl bg-slate-200 hover:bg-slate-300 text-slate-900 font-semibold px-4 py-2">Download PDF</button>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <!-- FOOTER -->
+    <footer class="border-t border-slate-200 bg-white/80">
+      <div class="max-w-7xl mx-auto px-6 py-4 flex flex-wrap items-center justify-between gap-3 text-xs text-slate-500">
+        <span>Chartie™ · Think · Ink · Chart. BOOM!</span>
+        <span>Made for teachers, PD leaders, and “Hey, let me show you something” Tuesdays.</span>
+      </div>
+    </footer>
   </div>
 
+  <!-- deps -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
+  <!-- Chartie logic -->
   <script src="app.js"></script>
 </body>
 </html>
