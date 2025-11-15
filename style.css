@@ -434,4 +434,42 @@ h1 {
   color: #0f172a !important;
   max-width: 22rem;
 }
+/* Soft notebook-style margin line inside landing preview */
+.anchor-sheet::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 2.75rem;              /* aligns with your fake punched holes */
+  width: 2px;
+  height: 100%;
+  background: rgba(59, 130, 246, 0.25); /* soft blue line */
+  pointer-events: none;
+}
+.anchor-sheet {
+  position: relative;
+  box-shadow:
+    inset 0 0 15px rgba(0, 0, 0, 0.06),
+    0 10px 30px rgba(15, 23, 42, 0.6);
+}
+.card {
+  background: rgba(255, 255, 255, 0.7);
+  padding: 0.5rem 0.75rem;
+  border-radius: 0.75rem;
+  box-shadow:
+    0 1px 3px rgba(0, 0, 0, 0.08),
+    0 4px 12px rgba(0, 0, 0, 0.06);
+}
+/* Fade-in on landing preview */
+.hidden.md\:block .paper {
+  opacity: 0;
+  transform: translateY(10px);
+  animation: paperShow 0.9s cubic-bezier(.19,1,.22,1) forwards;
+}
+
+@keyframes paperShow {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
 
