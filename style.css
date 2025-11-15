@@ -379,7 +379,6 @@ h1 {
   display: inline-block;
   padding-bottom: 0.15rem;
 }
-
 .card .marker-h::after {
   content: "";
   position: absolute;
@@ -395,21 +394,7 @@ h1 {
   );
   opacity: 0.9;
 }
-/* Teacher Tip styling in the landing preview */
-.anchor-sheet .sticky h4 {
-  font-size: 0.8rem;
-  text-transform: uppercase;
-  letter-spacing: 0.04em;
-  margin-top: 0.75rem;
-  margin-bottom: 0.25rem;
-  color: #0f172a;
-}
 
-.anchor-sheet .sticky p {
-  font-size: 0.8rem;
-  color: #111827;
-  max-width: 18rem;
-}
 /* === Larger, more readable sample-chart text === */
 
 /* Step and example text inside the landing sample */
@@ -427,19 +412,14 @@ h1 {
   margin-bottom: 0.25rem;
 }
 
-/* Teacher Tip paragraph sizing */
-.anchor-sheet .sticky p {
-  font-size: 0.95rem !important;   /* was 0.8 → more readable */
-  line-height: 1.45 !important;
-  color: #0f172a !important;
-  max-width: 22rem;
-}
+/* Anchor sheet + card visual styling */
 .anchor-sheet {
   position: relative;
   box-shadow:
     inset 0 0 15px rgba(0, 0, 0, 0.06),
     0 10px 30px rgba(15, 23, 42, 0.6);
 }
+
 .card {
   background: rgba(255, 255, 255, 0.7);
   padding: 0.5rem 0.75rem;
@@ -448,6 +428,7 @@ h1 {
     0 1px 3px rgba(0, 0, 0, 0.08),
     0 4px 12px rgba(0, 0, 0, 0.06);
 }
+
 /* Fade-in on landing preview */
 .hidden.md\:block .paper {
   opacity: 0;
@@ -461,64 +442,32 @@ h1 {
     transform: translateY(0);
   }
 }
-/* Sticky note font variants for comparison */
-.sticky-minerva h4,
-.sticky-minerva p {
-  /* Replace with your actual Minerva Script font-family name */
-  font-family: "Minerva Script", "Caveat", cursive !important;
-  text-shadow: none !important;      /* remove haze */
-  font-weight: 500;
-  letter-spacing: 0.3px;
+
+/* === Teacher Tip Styling Update ===
+   Header = Patrick Hand (clean, spaced right)
+   Body   = Satisfy (quick cursive)
+   ======================================= */
+
+.anchor-sheet .sticky h4 {
+  font-family: 'Patrick Hand', cursive !important;
+  font-size: 0.95rem !important;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  margin-top: 0.75rem;
+  margin-bottom: 0.25rem;
+  color: #0f172a !important;
+  text-shadow: none !important;
 }
 
-.sticky-strawberry h4,
-.sticky-strawberry p {
-  /* Replace with your actual Strawberry Lemonade font-family name */
-  font-family: "Strawberry Lemonade", "Caveat", cursive !important;
-  text-shadow: none !important;      /* remove haze */
-  font-weight: 500;
-  letter-spacing: 0.3px;
-}
-
-/* Bigger, clearer sticky note text overall */
-.sticky h4 {
-  font-size: 1.1rem !important;
-}
-
-.sticky p {
-  font-size: 1.05rem !important;
-  line-height: 1.3 !important;
-}
-/* Sticky Note Font Tests */
-.sticky-satisfy h4,
-.sticky-satisfy p {
+.anchor-sheet .sticky p {
   font-family: 'Satisfy', cursive !important;
+  font-size: 1.05rem !important;
+  line-height: 1.45 !important;
+  color: #0f172a !important;
   text-shadow: none !important;
-  font-size: 1.1rem;
-  line-height: 1.35;
+  letter-spacing: 0.01em;
+  white-space: pre-wrap;
 }
 
-.sticky-playwrite h4,
-.sticky-playwrite p {
-  font-family: 'Playwrite Tanzania', cursive !important;
-  text-shadow: none !important;
-  font-size: 1.05rem;
-  line-height: 1.35;
-}
 
-.sticky-cedar h4,
-.sticky-cedar p {
-  font-family: 'Cedarville Cursive', cursive !important;
-  text-shadow: none !important;
-  font-size: 1.1rem;
-  line-height: 1.35;
-}
-
-.sticky-gloria h4,
-.sticky-gloria p {
-  font-family: 'Gloria Hallelujah', cursive !important;
-  text-shadow: none !important;
-  font-size: 1.05rem;
-  line-height: 1.35;
-}
 
