@@ -362,20 +362,34 @@ function renderFrayerIFD(obj){
 }
 function renderFrayerClassic(obj){ return renderFrayerIFD(obj); }
 // Clean up math text a little (exponents, units, simple fractions, etc.)
+// Convert simple fractions like 1/2 → stacked HTML fraction
 function formatMath(text) {
   if (!text) return '';
 
-  let out = String(text);
+  let t = text;
 
-  // Common units
-  out = out
-    .replace(/cm\^2/g, 'cm²')
-    .replace(/cm\^3/g, 'cm³')
-    .replace(/m\^2/g, 'm²')
-    .replace(/m\^3/g, 'm³');
+  // Units (cm^2 → cm², etc.)
+  t = t.replace(/cm\^2/g, 'cm²')
+       .replace(/cm\^3/g, 'cm³')
+       .replace(/m\^2/g, 'm²')
+       .replace(/m\^3/g, 'm³');
 
-  // Generic "x^2" -> "x<sup>2</sup>"
-  out = out.replace(/(\w+)\^(\d+)/g, '$1<sup>$2</sup>');
+  // Exponents (x^2 → x<sup>2</sup>)
+  t = t.replace(/(\w+)\^(\d+)/g, '$1<sup>$2</sup>');
+
+  // Fractions (a/b → stacked fraction)
+  t = t.replace(/(\d+)\s*\/\s*(\d+)/g, (match, top, bottom) => {
+    return `
+      <span class="frac">
+        <span class="top">${top}</span>
+        <span class="bottom">${bottom}</span>
+      </span>
+    `;
+  });
+
+  return t;
+}
+
 
   // Simple numeric fractions like 3/4, 10/3, 1/2 → stacked HTML
   // Only grabs all–digit patterns so dates like 3/4/2024 don't get weird.
