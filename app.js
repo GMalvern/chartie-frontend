@@ -361,18 +361,33 @@ function renderFrayerIFD(obj){
   contentEl.appendChild(grid);
 }
 function renderFrayerClassic(obj){ return renderFrayerIFD(obj); }
-// Clean up math text a little (exponents, units like cm^2, etc.)
+// Clean up math text a little (exponents, units, simple fractions, etc.)
 function formatMath(text) {
   if (!text) return '';
-  return text
-    // Common units
+
+  let out = String(text);
+
+  // Common units
+  out = out
     .replace(/cm\^2/g, 'cm²')
     .replace(/cm\^3/g, 'cm³')
     .replace(/m\^2/g, 'm²')
-    .replace(/m\^3/g, 'm³')
-    // Generic "x^2" -> "x<sup>2</sup>"
-    .replace(/(\w+)\^(\d+)/g, '$1<sup>$2</sup>');
+    .replace(/m\^3/g, 'm³');
+
+  // Generic "x^2" -> "x<sup>2</sup>"
+  out = out.replace(/(\w+)\^(\d+)/g, '$1<sup>$2</sup>');
+
+  // Simple numeric fractions like 3/4, 10/3, 1/2 → stacked HTML
+  // Only grabs all–digit patterns so dates like 3/4/2024 don't get weird.
+  out = out.replace(/(^|[^\d])(\d+)\s*\/\s*(\d+)(?!\d)/g,
+    (match, prefix, num, den) => {
+      return `${prefix}<span class="frac"><span class="num">${num}</span><span class="bar"></span><span class="den">${den}</span></span>`;
+    }
+  );
+
+  return out;
 }
+
 
 // Remove leading "1. ", "2) ", etc. from steps so <ol> can number them
 function stripLeadingNumber(text) {
