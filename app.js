@@ -361,35 +361,21 @@ function renderFrayerIFD(obj){
   contentEl.appendChild(grid);
 }
 function renderFrayerClassic(obj){ return renderFrayerIFD(obj); }
-// Clean up math text a little (exponents, units, simple fractions, etc.)
-// Convert simple fractions like 1/2 → stacked HTML fraction
+
+// Clean up math text (exponents, units, simple numeric fractions → stacked HTML)
 function formatMath(text) {
   if (!text) return '';
+  let out = String(text);
 
-  let t = text;
+  // Common units
+  out = out
+    .replace(/cm\^2/g, 'cm²')
+    .replace(/cm\^3/g, 'cm³')
+    .replace(/m\^2/g, 'm²')
+    .replace(/m\^3/g, 'm³');
 
-  // Units (cm^2 → cm², etc.)
-  t = t.replace(/cm\^2/g, 'cm²')
-       .replace(/cm\^3/g, 'cm³')
-       .replace(/m\^2/g, 'm²')
-       .replace(/m\^3/g, 'm³');
-
-  // Exponents (x^2 → x<sup>2</sup>)
-  t = t.replace(/(\w+)\^(\d+)/g, '$1<sup>$2</sup>');
-
-  // Fractions (a/b → stacked fraction)
-  t = t.replace(/(\d+)\s*\/\s*(\d+)/g, (match, top, bottom) => {
-    return `
-      <span class="frac">
-        <span class="top">${top}</span>
-        <span class="bottom">${bottom}</span>
-      </span>
-    `;
-  });
-
-  return t;
-}
-
+  // Generic "x^2" -> "x<sup>2</sup>"
+  out = out.replace(/(\w+)\^(\d+)/g, '$1<sup>$2</sup>');
 
   // Simple numeric fractions like 3/4, 10/3, 1/2 → stacked HTML
   // Only grabs all–digit patterns so dates like 3/4/2024 don't get weird.
@@ -402,14 +388,11 @@ function formatMath(text) {
   return out;
 }
 
-
 // Remove leading "1. ", "2) ", etc. from steps so <ol> can number them
 function stripLeadingNumber(text) {
   if (!text) return '';
   return text.replace(/^\s*\d+[\.\)]\s*/, '');
 }
-
-function renderFrayerClassic(obj){ return renderFrayerIFD(obj); }
 
 function renderMathEx(obj){
   contentEl.innerHTML='';
@@ -481,7 +464,6 @@ function renderMathEx(obj){
   );
 }
 
-
 function renderByLayout(layout, data){
   titleEl.textContent = data.title || (topicEl.value || 'Your Chart');
   subEl.textContent = data.subtitle || '';
@@ -512,7 +494,9 @@ function relayout(){
   const layout = layoutSel.value;
   if(isSimpleLayout(layout)){ renderSimple(layout); return; }
   if(!lastChartJSON) return;
-  let chosen = layout==='auto' ? (looksMathy(topicEl.value)?'mathex':(looksLikeComparison(topicEl.value)?'compare':'standard')) : layout;
+  let chosen = layout==='auto'
+    ? (looksMathy(topicEl.value)?'mathex':(looksLikeComparison(topicEl.value)?'compare':'standard'))
+    : layout;
   renderByLayout(chosen, lastChartJSON);
   refreshHighlights();
 }
@@ -591,7 +575,7 @@ Return ONLY JSON with keys: title, subtitle, given[], formula, steps[], example[
       required:['title','causes','effects']
     };
   } else {
-    prompt=`You are Chartie. Anchor chart for: "${topic}". Short, concrete bullets. Include final "Example" section when helpful. Return JSON: {title, subtitle, sections:[{heading, bullets[]}]} `;
+    prompt=`You are Chartie. Anchor chart for: "${topic}". Short, concrete bullets. Include final "Example" section when helpful. Return JSON: {title, subtitle, sections:[{heading, bullets[]}]}.`;
     schema={
       type:'object',
       properties:{
@@ -707,4 +691,3 @@ setAccent('#f59e0b');
 setFonts('hand+rounded');
 setBackground('lined-light');
 refreshHighlights();
-
