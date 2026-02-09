@@ -351,6 +351,75 @@ function renderTimelineH(obj){
   events.forEach(ev=>row.appendChild(makeCard(ev.title, `<p class='text-sm'>${ev.text}</p>`)));
   contentEl.appendChild(row);
 }
+function renderStandards(obj) {
+  contentEl.innerHTML = '';
+
+  // Big Idea
+  const big = document.createElement('div');
+  big.className = 'card';
+  big.innerHTML = `
+    <h3 class="marker-h"><span class="hl hl-clean">Big Idea</span></h3>
+    <p>${obj.bigIdea}</p>
+  `;
+  contentEl.appendChild(big);
+
+  // I’ll Know / How I’ll Show It
+  const mid = document.createElement('div');
+  mid.className = 'grid gap-3 md:grid-cols-2';
+
+  mid.innerHTML = `
+    <div class="card">
+      <h3 class="marker-h"><span class="hl hl-clean">I’ll Know…</span></h3>
+      <ul class="pretty-list list-disc pl-6">
+        ${obj.illKnow.map(x => `<li>${x}</li>`).join('')}
+      </ul>
+    </div>
+    <div class="card">
+      <h3 class="marker-h"><span class="hl hl-clean">How I’ll Show It…</span></h3>
+      <ul class="pretty-list list-disc pl-6">
+        ${obj.howIllShowIt.map(x => `<li>${x}</li>`).join('')}
+      </ul>
+    </div>
+  `;
+  contentEl.appendChild(mid);
+
+  // Language / I Ask Myself
+  const mid2 = document.createElement('div');
+  mid2.className = 'grid gap-3 md:grid-cols-2';
+
+  mid2.innerHTML = `
+    <div class="card">
+      <h3 class="marker-h"><span class="hl hl-clean">Language I’ll Need…</span></h3>
+      <ul class="pretty-list list-disc pl-6">
+        ${obj.languageIllNeed.map(x => `<li>${x}</li>`).join('')}
+      </ul>
+    </div>
+    <div class="card">
+      <h3 class="marker-h"><span class="hl hl-clean">I Ask Myself…</span></h3>
+      <ul class="pretty-list list-disc pl-6">
+        ${obj.iAskMyself.map(x => `<li>${x}</li>`).join('')}
+      </ul>
+    </div>
+  `;
+  contentEl.appendChild(mid2);
+
+  // Be Careful → Instead
+  const wf = document.createElement('div');
+  wf.className = 'card';
+  wf.innerHTML = `
+    <h3 class="marker-h"><span class="hl hl-clean">Be Careful… → Instead…</span></h3>
+    <div class="grid gap-2">
+      ${obj.watchFix.map(p => `
+        <div class="grid grid-cols-[1fr_auto_1fr] items-center gap-2">
+          <div class="text-rose-700">⚠️ ${p.watch}</div>
+          <div class="font-bold text-slate-400">→</div>
+          <div class="text-emerald-700">✅ ${p.fix}</div>
+        </div>
+      `).join('')}
+    </div>
+  `;
+  contentEl.appendChild(wf);
+}
 function renderFrayerIFD(obj){
   contentEl.innerHTML='';
   const grid=document.createElement('div'); grid.className='grid gap-3 md:grid-cols-2';
