@@ -30,12 +30,6 @@ const progFill = document.getElementById('prog-fill');
 const pencil = document.getElementById('pencil');
 const loadingText = document.getElementById('loading-text');
 
-const qtPanel = document.getElementById('qt-panel');
-const qtRows = document.getElementById('qt-rows');
-const qtTitle = document.getElementById('qt-title');
-const qtSplitBlank = document.getElementById('qt-split-blank');
-const qtSplitLines = document.getElementById('qt-split-lines');
-
 const stickyBox = document.getElementById('sticky');
 const stickyH = document.getElementById('sticky-h');
 const stickyP = document.getElementById('sticky-p');
@@ -47,11 +41,13 @@ const accentButtons = [...document.querySelectorAll('.swatch')];
 
 // ===== State
 let lastChartJSON = null;
+
 const simpleLayouts = new Set([
   'simple-title-body','simple-2col','simple-3col','simple-2x2',
   'simple-title-sub-3','simple-title-sub-list','simple-quote',
   'simple-def-callout','simple-objective-steps','simple-image'
 ]);
+
 function isSimpleLayout(v){ return simpleLayouts.has(v); }
 
 // ===== Helpers
@@ -62,6 +58,7 @@ function setAccent(hex){
   document.documentElement.style.setProperty('--brush-url', url);
   refreshHighlights();
 }
+
 function setFonts(preset){
   if(preset === 'hand+rounded'){
     document.documentElement.style.setProperty('--title-font', "'Patrick Hand', cursive");
@@ -77,6 +74,7 @@ function setFonts(preset){
     document.documentElement.style.setProperty('--body-font', "'Nunito Sans', system-ui, -apple-system, Segoe UI, Roboto, sans-serif");
   }
 }
+
 function setBackground(style){
   sheet.classList.remove('bg-lined-light','bg-lined-dark','bg-blank','bg-graph','bg-poster');
   sheet.classList.add(
@@ -87,10 +85,7 @@ function setBackground(style){
     'bg-lined-light'
   );
 }
-function emojiFor(i){
-  const set=['🎯','📌','✏️','🧠','✨','📎','💡','🧩','📚','🔎'];
-  return set[i % set.length] + ' ';
-}
+
 function refreshHighlights(){
   const style = hlStyleSel.value;
   const els = sheet.querySelectorAll('.hl');
@@ -99,83 +94,92 @@ function refreshHighlights(){
     el.classList.add(style==='brush'?'hl-brush': style==='none'?'hl-none':'hl-clean');
   });
 }
+
 function looksLikeComparison(t){
-  const s=` ${String(t||'').toLowerCase()} `;
-  return /( vs\.? | versus | compare|comparison| pov |point of view|pro\/?con|two sides|for and against|perspective)/i.test(s);
+  return /(vs\.?|compare|comparison|two sides|for and against|perspective)/i.test(t||'');
 }
 function looksMathy(t){
-  return /[=±×÷\/]|fraction|solve|equation|area|perimeter|volume|slope|intercept/i.test(t||'');
+  return /[=±×÷\/]|equation|solve|fraction|area|perimeter|volume|slope/i.test(t||'');
 }
 
-// ===== Loading
-function startLoading(){ btnGen.disabled=true; btnGen.textContent='Creating…'; }
-function stopLoading(){ btnGen.disabled=false; btnGen.textContent='Create Chart'; }
-
-// ===== Renderers
+// ===== Rendering
 function makeCard(title, html){
-  const d=document.createElement('div'); d.className='card';
-  d.innerHTML = (title?`<h3 class="marker-h"><span class="hl hl-clean">${title}</span></h3>`:'') + (html||'');
+  const d=document.createElement('div'); 
+  d.className='card';
+  d.innerHTML = `<h3 class="marker-h"><span class="hl hl-clean">${title}</span></h3>${html}`;
   return d;
 }
 
-function renderStandards(obj){
-  contentEl.innerHTML='';
+function renderStandards(obj) {
+  contentEl.innerHTML = '';
+
   contentEl.appendChild(makeCard('Big Idea', `<p>${obj.bigIdea}</p>`));
 
-  const mid=document.createElement('div'); mid.className='grid gap-3 md:grid-cols-2';
-  mid.appendChild(makeCard("I’ll Know…", `<ul class='pretty-list list-disc pl-6'>${obj.illKnow.map(x=>`<li>${x}</li>`).join('')}</ul>`));
-  mid.appendChild(makeCard("How I’ll Show It…", `<ul class='pretty-list list-disc pl-6'>${obj.howIllShowIt.map(x=>`<li>${x}</li>`).join('')}</ul>`));
+  const mid = document.createElement('div');
+  mid.className = 'grid gap-3 md:grid-cols-2';
+  mid.appendChild(makeCard("I’ll Know…", `<ul class="pretty-list list-disc pl-6">${obj.illKnow.map(x=>`<li>${x}</li>`).join('')}</ul>`));
+  mid.appendChild(makeCard("How I’ll Show It…", `<ul class="pretty-list list-disc pl-6">${obj.howIllShowIt.map(x=>`<li>${x}</li>`).join('')}</ul>`));
   contentEl.appendChild(mid);
 
-  const mid2=document.createElement('div'); mid2.className='grid gap-3 md:grid-cols-2';
-  mid2.appendChild(makeCard("Language I’ll Need…", `<ul class='pretty-list list-disc pl-6'>${obj.languageIllNeed.map(x=>`<li>${x}</li>`).join('')}</ul>`));
-  mid2.appendChild(makeCard("I Ask Myself…", `<ul class='pretty-list list-disc pl-6'>${obj.iAskMyself.map(x=>`<li>${x}</li>`).join('')}</ul>`));
+  const mid2 = document.createElement('div');
+  mid2.className = 'grid gap-3 md:grid-cols-2';
+  mid2.appendChild(makeCard("Language I’ll Need…", `<ul class="pretty-list list-disc pl-6">${obj.languageIllNeed.map(x=>`<li>${x}</li>`).join('')}</ul>`));
+  mid2.appendChild(makeCard("I Ask Myself…", `<ul class="pretty-list list-disc pl-6">${obj.iAskMyself.map(x=>`<li>${x}</li>`).join('')}</ul>`));
   contentEl.appendChild(mid2);
 
-  const wf = `<div class='grid gap-2'>${obj.watchFix.map(p=>`
-    <div class='grid grid-cols-[1fr_auto_1fr] gap-2'>
-      <div class='text-rose-700'>⚠️ ${p.watch}</div>
-      <div class='font-bold text-slate-400'>→</div>
-      <div class='text-emerald-700'>✅ ${p.fix}</div>
-    </div>`).join('')}</div>`;
-  contentEl.appendChild(makeCard('Be Careful → Instead', wf));
-}
-
-// ===== Router
-function renderByLayout(layout, data){
-  titleEl.textContent = data.title || topicEl.value || 'Your Chart';
-  if(layout==='standards') return renderStandards(data);
-  // fallback
-  contentEl.innerHTML='<p class="text-sm text-slate-500">Layout not implemented.</p>';
+  const wf = document.createElement('div');
+  wf.className = 'card';
+  wf.innerHTML = `
+    <h3 class="marker-h"><span class="hl hl-clean">Be Careful → Instead</span></h3>
+    ${obj.watchFix.map(p=>`
+      <div class="grid grid-cols-[1fr_auto_1fr] gap-2 items-center">
+        <div class="text-rose-700">⚠️ ${p.watch}</div>
+        <div class="font-bold text-slate-400">→</div>
+        <div class="text-emerald-700">✅ ${p.fix}</div>
+      </div>
+    `).join('')}
+  `;
+  contentEl.appendChild(wf);
 }
 
 // ===== Model Call
 async function callModel(body){
   const r = await fetch(`${PROXY}/api/generate`, {
-    method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(body)
+    method:'POST',
+    headers:{'Content-Type':'application/json'},
+    body: JSON.stringify(body)
   });
   const data = await r.json();
   return { ok:r.ok, data };
 }
 
+// ===== Generate
 async function generate(){
   const topic=(topicEl.value||'').trim();
-  if(!topic) return;
+  if(!topic){ errorEl.textContent='Enter a topic.'; errorEl.classList.remove('hidden'); return; }
+  errorEl.classList.add('hidden');
 
   let chosen = layoutSel.value === 'standards'
     ? 'standards'
-    : (layoutSel.value==='auto'
-      ? (looksMathy(topic)?'mathex':(looksLikeComparison(topic)?'compare':'standard'))
-      : layoutSel.value);
+    : layoutSel.value === 'auto'
+      ? (looksMathy(topic) ? 'mathex' : looksLikeComparison(topic) ? 'compare' : 'standard')
+      : layoutSel.value;
 
-  if(chosen!=='standards'){ alert('Select "Standards Breakdown" layout to test.'); return; }
+  let prompt = `
+You are Chartie, decoding a K–12 standard into student-friendly classroom language.
 
-  startLoading();
+Standard: "${topic}"
 
-  const prompt = `You are Chartie, decoding a K-12 academic standard into student-friendly classroom language.
-Create a Standards Breakdown for: "${topic}".
-Return ONLY JSON with keys:
-title, bigIdea, illKnow[], howIllShowIt[], languageIllNeed[], iAskMyself[], watchFix[{watch,fix}]`;
+Return ONLY JSON:
+{
+  "title": "${topic}",
+  "bigIdea": "...",
+  "illKnow": ["..."],
+  "howIllShowIt": ["..."],
+  "languageIllNeed": ["..."],
+  "iAskMyself": ["..."],
+  "watchFix": [{ "watch": "...", "fix": "..." }]
+}`;
 
   const schema = {
     type:'object',
@@ -187,24 +191,28 @@ title, bigIdea, illKnow[], howIllShowIt[], languageIllNeed[], iAskMyself[], watc
       languageIllNeed:{type:'array',items:{type:'string'}},
       iAskMyself:{type:'array',items:{type:'string'}},
       watchFix:{type:'array',items:{type:'object'}}
-    },
-    required:['title','bigIdea','illKnow','howIllShowIt','languageIllNeed','iAskMyself','watchFix']
+    }
   };
 
   const {ok,data} = await callModel({
     model: MODEL,
     contents:[{parts:[{text:prompt}]}],
-    generationConfig:{ responseMimeType:'application/json', responseSchema:schema }
+    generationConfig:{responseMimeType:'application/json',responseSchema:schema}
   });
 
-  stopLoading();
-
-  const text=data?.candidates?.[0]?.content?.parts?.[0]?.text||'{}';
+  const text = data?.candidates?.[0]?.content?.parts?.[0]?.text || '{}';
   lastChartJSON = JSON.parse(text);
-  renderByLayout(chosen, lastChartJSON);
+
+  titleEl.textContent = lastChartJSON.title;
+  formatBadge.textContent = "Format: Standards Breakdown";
+  renderStandards(lastChartJSON);
 }
 
 // ===== Events
 btnGen.addEventListener('click', generate);
 accentButtons.forEach(b=> b.addEventListener('click', ()=> setAccent(b.dataset.color)));
+
 setAccent('#f59e0b');
+setFonts('hand+rounded');
+setBackground('lined-light');
+refreshHighlights();
