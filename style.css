@@ -492,6 +492,10 @@ h1 {
   border-top: 1.3px solid currentColor;
   margin: 0 -0.05em;
 }
+/* === HOTFIX: stop forced underline so highlight toggle works === */
+.card .marker-h::after {
+  content: none !important;
+}
 
 
 
