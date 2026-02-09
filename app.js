@@ -574,6 +574,52 @@ Return ONLY JSON with keys: title, subtitle, given[], formula, steps[], example[
       },
       required:['title','causes','effects']
     };
+    else if (layout === 'standards') {
+  prompt = `You are Chartie, decoding a K-12 academic standard into student-friendly classroom language.
+
+Create a Standards Breakdown for the standard: "${topic}"
+
+Write everything in clear, teacher voice that sounds natural on a classroom wall.
+
+Return ONLY JSON with this structure:
+
+{
+  "title": "Standard code or short label",
+  "bigIdea": "Student-friendly meaning of the standard",
+  "illKnow": ["...","..."],
+  "howIllShowIt": ["...","..."],
+  "languageIllNeed": ["...","..."],
+  "iAskMyself": ["...","..."],
+  "watchFix": [
+    { "watch": "...", "fix": "..." }
+  ]
+}`;
+  
+  schema = {
+    type: 'object',
+    properties: {
+      title: { type: 'string' },
+      bigIdea: { type: 'string' },
+      illKnow: { type: 'array', items: { type: 'string' } },
+      howIllShowIt: { type: 'array', items: { type: 'string' } },
+      languageIllNeed: { type: 'array', items: { type: 'string' } },
+      iAskMyself: { type: 'array', items: { type: 'string' } },
+      watchFix: {
+        type: 'array',
+        items: {
+          type: 'object',
+          properties: {
+            watch: { type: 'string' },
+            fix: { type: 'string' }
+          },
+          required: ['watch', 'fix']
+        }
+      }
+    },
+    required: ['title','bigIdea','illKnow','howIllShowIt','languageIllNeed','iAskMyself','watchFix']
+  };
+}
+
   } else {
     prompt=`You are Chartie. Anchor chart for: "${topic}". Short, concrete bullets. Include final "Example" section when helpful. Return JSON: {title, subtitle, sections:[{heading, bullets[]}]}.`;
     schema={
