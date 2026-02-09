@@ -317,6 +317,7 @@ function looksLayoutFromAuto(topic){
   if(looksMathy(topic)) return 'mathex';
   if(looksLikeComparison(topic)) return 'compare';
   return 'standard';
+  if(layout==='standards') return renderStandards(data);
 }
 function renderStandard(obj){
   contentEl.innerHTML='';
