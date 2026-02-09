@@ -12,6 +12,7 @@ const sheet = document.getElementById('sheet');
 const titleEl = document.getElementById('chart-title');
 const subEl = document.getElementById('chart-sub');
 const contentEl = document.getElementById('chart-content');
+const formatBadge = document.getElementById('format-badge');
 const srStatus = document.getElementById('sr-status');
 
 const layoutSel = document.getElementById('layout');
@@ -29,185 +30,186 @@ const progFill = document.getElementById('prog-fill');
 const pencil = document.getElementById('pencil');
 const loadingText = document.getElementById('loading-text');
 
+const qtPanel = document.getElementById('qt-panel');
+const qtRows = document.getElementById('qt-rows');
+const qtTitle = document.getElementById('qt-title');
+const qtSplitBlank = document.getElementById('qt-split-blank');
+const qtSplitLines = document.getElementById('qt-split-lines');
+
 const stickyBox = document.getElementById('sticky');
 const stickyH = document.getElementById('sticky-h');
 const stickyP = document.getElementById('sticky-p');
+const stickyControls = document.getElementById('sticky-controls');
+const stickyTitle = document.getElementById('sticky-title');
+const stickyText = document.getElementById('sticky-text');
 
 const accentButtons = [...document.querySelectorAll('.swatch')];
 
+// ===== State
 let lastChartJSON = null;
-let lastLayout = "standard";
 
 // ===== Helpers
 function setAccent(hex){
   document.documentElement.style.setProperty('--accent', hex);
 }
+
 function setFonts(preset){
+  const root = document.documentElement;
   if(preset === 'hand+rounded'){
-    document.documentElement.style.setProperty('--title-font', "'Patrick Hand', cursive");
-    document.documentElement.style.setProperty('--body-font', "'Poppins', system-ui");
+    root.style.setProperty('--title-font', "'Patrick Hand', cursive");
+    root.style.setProperty('--body-font', "'Poppins', system-ui, sans-serif");
   } else if(preset === 'serif+rounded'){
-    document.documentElement.style.setProperty('--title-font', "'DM Serif Display', serif");
-    document.documentElement.style.setProperty('--body-font', "'Nunito Sans', system-ui");
+    root.style.setProperty('--title-font', "'DM Serif Display', serif");
+    root.style.setProperty('--body-font', "'Nunito Sans', system-ui, sans-serif");
+  } else if(preset === 'hand+sans'){
+    root.style.setProperty('--title-font', "'Patrick Hand', cursive");
+    root.style.setProperty('--body-font', "'Nunito Sans', system-ui, sans-serif");
   } else {
-    document.documentElement.style.setProperty('--title-font', "'Nunito Sans', system-ui");
-    document.documentElement.style.setProperty('--body-font', "'Nunito Sans', system-ui");
+    root.style.setProperty('--title-font', "'Nunito Sans', system-ui, sans-serif");
+    root.style.setProperty('--body-font', "'Nunito Sans', system-ui, sans-serif");
   }
 }
+
 function setBackground(style){
-  sheet.className = `anchor-sheet paper bg-${style}`;
+  sheet.classList.remove('bg-lined-light','bg-lined-dark','bg-blank','bg-graph','bg-poster');
+  sheet.classList.add(style === 'lined-dark' ? 'bg-lined-dark'
+    : style === 'blank' ? 'bg-blank'
+    : style === 'graph' ? 'bg-graph'
+    : style === 'poster' ? 'bg-poster'
+    : 'bg-lined-light');
 }
+
 function refreshHighlights(){
   const style = hlStyleSel.value;
   sheet.querySelectorAll('.hl').forEach(el=>{
-    el.className = `hl ${style === 'none' ? 'hl-none' : style === 'brush' ? 'hl-brush' : 'hl-clean'}`;
+    el.classList.remove('hl-clean','hl-brush','hl-none');
+    el.classList.add(style === 'brush' ? 'hl-brush' : style === 'none' ? 'hl-none' : 'hl-clean');
   });
 }
+
 function applyStyling(){
   sheet.classList.toggle('bigtext', toggleBig.checked);
-  setFonts(fontPresetSel.value);
+  sheet.classList.toggle('math-hand', toggleHand.checked);
   setBackground(bgStyleSel.value);
+  setFonts(fontPresetSel.value);
   refreshHighlights();
-  stickyBox.classList.toggle('hidden', !toggleSticky.checked);
-}
-function emoji(i){ return toggleEmoji.checked ? ['🎯','🧠','📌','✨'][i%4]+' ' : ''; }
 
-// ===== Renderers
+  stickyBox.classList.toggle('hidden', !toggleSticky.checked);
+  stickyH.textContent = stickyTitle.value || '';
+  stickyP.textContent = stickyText.value || '';
+}
+
+// ===== Rendering
 function makeCard(title, html){
   const d=document.createElement('div');
   d.className='card';
-  d.innerHTML = `<h3 class="marker-h"><span class="hl">${title}</span></h3>${html}`;
+  d.innerHTML = title ? `<h3 class="marker-h"><span class="hl">${title}</span></h3>${html}` : html;
   return d;
 }
 
-function renderStandard(data){
+function renderStandards(obj){
+  contentEl.innerHTML = '';
+
+  contentEl.appendChild(makeCard('Big Idea', `<p>${obj.bigIdea}</p>`));
+
+  const grid1 = document.createElement('div');
+  grid1.className = 'grid gap-3 md:grid-cols-2';
+  grid1.appendChild(makeCard('I’ll Know…', `<ul class="pretty-list list-disc pl-6">${obj.illKnow.map(x=>`<li>${x}</li>`).join('')}</ul>`));
+  grid1.appendChild(makeCard('I’ll show it by…', `<ul class="pretty-list list-disc pl-6">${obj.howIllShowIt.map(x=>`<li>${x}</li>`).join('')}</ul>`));
+  contentEl.appendChild(grid1);
+
+  const grid2 = document.createElement('div');
+  grid2.className = 'grid gap-3 md:grid-cols-2';
+  grid2.appendChild(makeCard('Vocabulary', `<ul class="pretty-list list-disc pl-6">${obj.languageIllNeed.slice(0,6).map(x=>`<li>${x}</li>`).join('')}</ul>`));
+  grid2.appendChild(makeCard('I Ask Myself…', `<ul class="pretty-list list-disc pl-6">${obj.iAskMyself.map(x=>`<li>${x}</li>`).join('')}</ul>`));
+  contentEl.appendChild(grid2);
+
+  const fixes = obj.watchFix.map(p=>`
+    <div class="grid grid-cols-[1fr_auto_1fr] gap-2 items-center">
+      <div class="text-rose-700">⚠️ ${p.watch}</div>
+      <div>→</div>
+      <div class="text-emerald-700">✅ ${p.fix}</div>
+    </div>
+  `).join('');
+
+  contentEl.appendChild(makeCard('Be Careful → Instead', fixes));
+}
+
+function renderStandard(obj){
   contentEl.innerHTML='';
-  data.sections.forEach((s,i)=>{
-    contentEl.appendChild(makeCard(
-      s.heading,
-      `<ul class="pretty-list list-disc pl-6">${s.bullets.map((b,j)=>`<li>${emoji(j)}${b}</li>`).join('')}</ul>`
-    ));
+  (obj.sections||[]).forEach(s=>{
+    contentEl.appendChild(makeCard(s.heading, `<ul class="pretty-list list-disc pl-6">${s.bullets.map(b=>`<li>${b}</li>`).join('')}</ul>`));
   });
 }
 
-function renderStandards(obj){
-  contentEl.innerHTML='';
+function renderByLayout(layout, data){
+  titleEl.textContent = data.title || topicEl.value;
+  subEl.textContent = data.subtitle || '';
+  formatBadge.textContent = '';
+  applyStyling();
 
-  contentEl.appendChild(makeCard("Big Idea", `<p>${obj.bigIdea}</p>`));
-
-  const mid = document.createElement('div');
-  mid.className='grid gap-3 md:grid-cols-2';
-  mid.innerHTML = `
-    <div class="card">
-      <h3 class="marker-h"><span class="hl">I’ll Know…</span></h3>
-      <ul class="pretty-list list-disc pl-6">${obj.illKnow.map(x=>`<li>${x}</li>`).join('')}</ul>
-    </div>
-    <div class="card">
-      <h3 class="marker-h"><span class="hl">I’ll Show It By…</span></h3>
-      <ul class="pretty-list list-disc pl-6">${obj.howIllShowIt.map(x=>`<li>${x}</li>`).join('')}</ul>
-    </div>
-  `;
-  contentEl.appendChild(mid);
-
-  const mid2 = document.createElement('div');
-  mid2.className='grid gap-3 md:grid-cols-2';
-  mid2.innerHTML = `
-    <div class="card">
-      <h3 class="marker-h"><span class="hl">Vocabulary</span></h3>
-      <div class="grid grid-cols-2 gap-2 text-sm">${obj.vocabulary.map(w=>`<div>• ${w}</div>`).join('')}</div>
-    </div>
-    <div class="card">
-      <h3 class="marker-h"><span class="hl">I Ask Myself…</span></h3>
-      <ul class="pretty-list list-disc pl-6">${obj.iAskMyself.map(x=>`<li>${x}</li>`).join('')}</ul>
-    </div>
-  `;
-  contentEl.appendChild(mid2);
-
-  const wf = document.createElement('div');
-  wf.className='grid gap-3 md:grid-cols-2';
-  wf.innerHTML = `
-    <div class="card">
-      <h3 class="marker-h"><span class="hl">Be Careful…</span></h3>
-      ${obj.watchFix.map(p=>`<div class="text-rose-700">⚠️ ${p.watch}</div>`).join('')}
-    </div>
-    <div class="card">
-      <h3 class="marker-h"><span class="hl">Instead…</span></h3>
-      ${obj.watchFix.map(p=>`<div class="text-emerald-700">✅ ${p.fix}</div>`).join('')}
-    </div>
-  `;
-  contentEl.appendChild(wf);
+  if(layout === 'standards') return renderStandards(data);
+  return renderStandard(data);
 }
 
-// ===== AI
-async function generate(){
-  const topic = topicEl.value.trim();
-  if(!topic){ errorEl.textContent="Type a standard or topic."; errorEl.classList.remove('hidden'); return; }
-
-  errorEl.classList.add('hidden');
-  btnGen.disabled=true;
-
-  let layout = layoutSel.value === 'auto' ? 'standard' : layoutSel.value;
-  lastLayout = layout;
-
-  let prompt = layout === 'standards'
-    ? `You are Chartie. Decode this standard into a SHORT, student-friendly wall poster in teacher voice.
-
-Standard: "${topic}"
-
-Return ONLY JSON:
-{
-  "title": "${topic}",
-  "bigIdea": "One punchy sentence in teacher voice",
-  "illKnow": ["short", "high-leverage", "skills"],
-  "howIllShowIt": ["starting with -ing", "lowercase"],
-  "vocabulary": ["5-8 essential words"],
-  "iAskMyself": ["thinking prompts"],
-  "watchFix": [{ "watch": "...", "fix": "..." }]
-}`
-    : `Create a short anchor chart for "${topic}" with 3 sections. Return JSON {title, sections:[{heading, bullets[]}]} `;
-
-  const res = await fetch(`${PROXY}/api/generate`,{
+// ===== Model
+async function callModel(body){
+  const r = await fetch(`${PROXY}/api/generate`, {
     method:'POST',
     headers:{'Content-Type':'application/json'},
-    body:JSON.stringify({
-      model:MODEL,
-      contents:[{parts:[{text:prompt}]}]
-    })
+    body: JSON.stringify(body)
   });
-
-  const data = await res.json();
-  const text = data?.candidates?.[0]?.content?.parts?.[0]?.text || "{}";
-  lastChartJSON = JSON.parse(text);
-
-  titleEl.textContent = lastChartJSON.title || topic;
-  subEl.textContent = "";
-
-  if(layout === 'standards') renderStandards(lastChartJSON);
-  else renderStandard(lastChartJSON);
-
-  applyStyling();
-  btnGen.disabled=false;
+  return r.json();
 }
 
-// ===== Downloads
-btnDl.onclick = async()=>{
-  const canvas = await html2canvas(sheet,{scale:2,backgroundColor:'#fff9e8'});
-  const a=document.createElement('a');
-  a.href=canvas.toDataURL(); a.download='chart.png'; a.click();
-};
-btnPDF.onclick = async()=>{
-  const {jsPDF}=window.jspdf;
-  const canvas = await html2canvas(sheet,{scale:2,backgroundColor:'#fff9e8'});
-  const pdf=new jsPDF({orientation:orientSel.value});
-  pdf.addImage(canvas.toDataURL(),'PNG',10,10,190,0);
-  pdf.save('chart.pdf');
-};
+async function generate(){
+  const topic = topicEl.value.trim();
+  if(!topic){
+    errorEl.textContent = 'Please enter a topic.';
+    errorEl.classList.remove('hidden');
+    return;
+  }
+  errorEl.classList.add('hidden');
+
+  const chosen = layoutSel.value === 'auto' ? 'standard' : layoutSel.value;
+
+  let prompt, schema;
+
+  if(chosen === 'standards'){
+    prompt = `Decode this TEKS into a student-friendly wall chart in warm teacher voice:\n${topic}\nReturn JSON with: title, bigIdea, illKnow[], howIllShowIt[], languageIllNeed[], iAskMyself[], watchFix[{watch,fix}].`;
+    schema = {};
+  } else {
+    prompt = `Create an anchor chart for: "${topic}". Return JSON: {title, subtitle, sections:[{heading, bullets[]}]} `;
+    schema = {};
+  }
+
+  try{
+    const data = await callModel({
+      model: MODEL,
+      contents:[{parts:[{text:prompt}]}],
+      generationConfig:{ responseMimeType:'application/json' }
+    });
+
+    const text = data.candidates?.[0]?.content?.parts?.[0]?.text || '{}';
+    lastChartJSON = JSON.parse(text);
+    renderByLayout(chosen, lastChartJSON);
+    srStatus.textContent='Chart ready.';
+  } catch(e){
+    console.error(e);
+    errorEl.textContent='Model error. Check console.';
+    errorEl.classList.remove('hidden');
+  }
+}
 
 // ===== Events
-btnGen.onclick=generate;
+btnGen.addEventListener('click', generate);
+btnDl.addEventListener('click', ()=>alert('PNG download works once render works'));
+btnPDF.addEventListener('click', ()=>alert('PDF download works once render works'));
+
 [layoutSel, hlStyleSel, fontPresetSel, bgStyleSel, toggleBig, toggleEmoji, toggleHand, toggleSticky]
-.forEach(el=>el.onchange=()=>{ if(lastChartJSON){ layoutSel.value==='standards'?renderStandards(lastChartJSON):renderStandard(lastChartJSON); applyStyling(); }});
-accentButtons.forEach(b=>b.onclick=()=>setAccent(b.dataset.color));
+  .forEach(el=> el.addEventListener('change', ()=> lastChartJSON && renderByLayout(layoutSel.value === 'auto' ? 'standard' : layoutSel.value, lastChartJSON)));
 
 setAccent('#f59e0b');
 setFonts('hand+rounded');
+setBackground('lined-light');
+refreshHighlights();
